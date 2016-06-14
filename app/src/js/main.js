@@ -1,5 +1,5 @@
 
-const POSTS_URL = '/api/posts.json'
+const POSTS_URL = 'api/posts.json'
     , HTTP_OK = 200
     , AT = "access_token="
     , TOKEN = "f817635b9f791a74e711eb4cc32504deea8caf69"

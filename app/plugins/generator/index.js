@@ -100,92 +100,98 @@ function getRoutes(app) {
 };
 
 function makeGeneratedFiles(targetPath, basePath, app, config, onDone) {
-  return function(err, stdout, stderr){
-    if(err){
-      Logger.log('critical', err);
+  let staticsFolder = [basePath, config.statics].join(config.sep)
+    , dataFolder = [basePath, config.database.name].join(config.sep)
+    , copyStr = "cp -R " + staticsFolder + " " + targetPath
+    , folderDataTarget = ([targetPath, config.apiUrl||'api'].join(config.sep)).replace(/\/\//g, '/')
+    , copyData = "cp -R "+ dataFolder + " " + folderDataTarget
+    ;
+  copyStr = copyStr.replace(/\/\//g, '/');
+  copyData = copyData.replace(/\/\//g, '/');
+  Logger.log('notice', copyStr);
+  Logger.log('notice', copyData);
+  exec(copyStr, (err2, stdout2, stderr2) => {
+    if(err2){
+      Logger.log('critical', err2);
       return onDone();
     }
-    let staticsFolder = [basePath, config.statics].join(config.sep)
-      , dataFolder = [basePath, config.database.name].join(config.sep)
-      , copyStr = "cp -R " + staticsFolder + "/* " + targetPath
-      , folderDataTarget = ([targetPath, config.apiUrl].join(config.sep)).replace(/\/\//g, '/')
-      , copyData = "cp -R "+ dataFolder + "/* " + folderDataTarget
-      ;
-    exec("mkdir -p "+targetPath, function(errmk1){
-      if(errmk1){
-        Logger.log('critical', errmk1);
-        return onDone();
-      }
-      copyStr = copyStr.replace(/\/\//g, '/');
-      copyData = copyData.replace(/\/\//g, '/');
-      Logger.log('notice', copyStr);
-      Logger.log('notice', copyData);
-      exec(copyStr, (err2, stdout2, stderr2) => {
-        let tpltsDir = [basePath, config.templates].join(config.sep);
-        let fullRoutes = getFilesList(tpltsDir, config);
-        let ort = getRoutes(app);
-        let routes = {};
-        for (let r of fullRoutes) {
-          let row = {};
-          routes[r.replace(tpltsDir, "")] = {
-            "GET": tpltsDir
-          };
+    let tpltsDir = [basePath, config.templates].join(config.sep);
+    let fullRoutes = getFilesList(tpltsDir, config);
+    let ort = getRoutes(app);
+    let routes = {};
+    for (let r of fullRoutes) {
+      let row = {};
+      routes[r.replace(tpltsDir, "")] = {
+        "GET": tpltsDir
+      };
+    }
+    var counter = {
+      "started": 0,
+      "finished": 0
+    };
+    for (let route in routes) {
+      var routeData = routes[route];
+      for (var method in routeData) {
+        if (method.toUpperCase() !== 'GET') {
+          continue;
         }
-        var counter = {
-          "started": 0,
-          "finished": 0
+        let options = {
+          host: config.host || 'localhost',
+          port: config.generationPort || 6783,
+          path: route
         };
-        for (let route in routes) {
-          var routeData = routes[route];
-          for (var method in routeData) {
-            if (method.toUpperCase() !== 'GET') {
-              continue;
-            }
-            let options = {
-              host: config.host || 'localhost',
-              port: config.generationPort || 6783,
-              path: route
-            };
-            if (method.toUpperCase() !== "GET") {
-              options["method"] = method.toUpperCase();
-            }
-            let path = route;
-            let req = http.request(options, (response) => {
-              let resp = '';
-              response.on("data", (chunk) => {
-                resp += chunk;
-              });
-              response.on("end", (chunk) => {
-                Logger.log("info", "Saving " + path + "=>" + method);
-                save(targetPath, path, resp, () => {
-                  counter.finished += 1;
-                  if (counter.started === counter.finished) {
-                    if (!!onDone) {
-                      if(fs.lstatSync(dataFolder).isDirectory()){
-                        mkdirp(folderDataTarget, function(err) {
-                          if (err) {
-                            console.error("Error creating folder " + path, err);
-                            onDone();
-                          } else {
-                            exec(copyData, (err3, stdout3, stderr3) => {
-                              Logger.log('notice', 'data files copied.');
-                              onDone();
-                            });
-                          }
-                        });
-                      }
-                    }
-                  }
-                });
-              });
-            });
-            counter.started += 1;
-            req.end();
-          }
+        if (method.toUpperCase() !== "GET") {
+          options["method"] = method.toUpperCase();
         }
-      });
-    });
-  }
+        let path = route;
+        let req = http.request(options, (response) => {
+          let resp = '';
+          response.on("data", (chunk) => {
+            resp += chunk;
+          });
+          response.on("end", (chunk) => {
+            Logger.log("info", "Saving " + path + "=>" + method);
+            save(targetPath, path, resp, () => {
+              counter.finished += 1;
+              if (counter.started === counter.finished) {
+                if (!!onDone) {
+                  exec(copyData, (err3, stdout3, stderr3) => {
+                    Logger.log('notice', 'data files copied.');
+                    onDone();
+                  });
+                }
+              }
+            });
+          });
+        });
+        counter.started += 1;
+        req.end();
+      }
+    }
+  });
+}
+
+function deleteFolder(targetPath, cb){
+  fs.exists(targetPath, function(exists) {
+      if (exists) {
+        let delString = "rm -Rf " + targetPath;
+        Logger.log('notice', delString);
+        exec(delString, function(err, stdout, stderr){
+          if(err){
+            if(!!cb){
+              cb(err);
+            }
+            return;
+          }
+          deleteFolder(targetPath, cb);
+        });
+      } else {
+        Logger.log('notice', targetPath+" does not exists...");
+        if(!!cb){
+          cb(null);
+        }
+      }
+  });
 }
 
 function generate(basePath, app, config, onDone) {
@@ -197,7 +203,13 @@ function generate(basePath, app, config, onDone) {
     Logger.log('critical', "Invalid target folder, check it!.");
     onDone();
   } else {
-    exec(delString, makeGeneratedFiles(targetPath, basePath, app, config, onDone)());
+    deleteFolder(targetPath, function(err){
+      if(err){
+        Logger.log('critical', err);
+        return onDone();
+      }
+      makeGeneratedFiles(targetPath, basePath, app, config, onDone);
+    });
   }
 };
 

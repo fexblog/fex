@@ -1,6 +1,6 @@
 
 var config = {
-  "port": 9090,
+  "port": 9092,
   "sources": "src",
   "statics": "public",
   "plugins": "plugins",
