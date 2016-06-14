@@ -1,0 +1,16 @@
+[submodule "app/controllers/frontendcontroller"]
+	path = app/controllers/frontendcontroller
+	url = https://github.com/franky-tool/franky-frontendcontroller
+	branch = master
+[submodule "app/controllers/datacontroller"]
+	path = app/controllers/datacontroller
+	url = https://github.com/franky-tool/franky-datacontroller
+	branch = master
+[submodule "app/plugins/generator"]
+	path = app/plugins/generator
+	url = https://github.com/franky-tool/franky-sitegenerator
+	branch = master
+[submodule "app/plugins/requestLog"]
+	path = app/plugins/requestLog
+	url = https://github.com/franky-tool/franky-requestLog
+	branch = master

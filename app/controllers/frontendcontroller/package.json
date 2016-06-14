@@ -1,0 +1,11 @@
+{
+  "name": "frontendcontroller",
+  "version": "1.0.0",
+  "description": "Franky controller module for dispatch views",
+  "main": "index.js",
+  "scripts": {
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
+}
