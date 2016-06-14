@@ -1,14 +1,75 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Document</title>
-    <link rel="stylesheet" href="/css/sample.css">
-</head>
-<body>
-  
-  
-    
-  <script src="/js/main.js"></script>
-</body>
+
+<!DOCTYPE HTML>
+
+{% set BlogName = "FEX" %}
+
+<html>
+	<head>
+		<title>[$ BlogName $] Blog</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="./assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="./assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="./assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="./assets/css/ie8.css" /><![endif]-->
+	</head>
+	<body ng-app="app">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+				{% include "components/header.html" %}
+
+				<!-- Menu -->
+				{% include "components/menu.html" %}
+
+				<!-- Main -->
+					<div id="main" ng-controller="PostsController">
+						
+						<blog-post ng-show="checkFilter(post)" ng-repeat="post in posts" content="post"></blog-post>
+						
+						<!-- Pagination -->
+							<ul class="actions pagination">
+								<li><a href="" class="disabled button big previous">Previous Page</a></li>
+								<li><a href="#" class="button big next">Next Page</a></li>
+							</ul>
+
+					</div>
+
+				<!-- Sidebar -->
+					<section id="sidebar">
+
+						<!-- Intro -->
+							<section id="intro">
+								<a href="#" class="logo"><img src="./assets/images/logo.jpg" alt="" /></a>
+								<header>
+									<h2>[$ BlogName $]</h2>
+									<p>Another great place to learn from new web technologies</p>
+								</header>
+							</section>
+
+						<!-- About -->
+						{% include "components/about.html" %}
+
+						<!-- Footer -->
+						{% include "components/footer.html" %}
+
+					</section>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="./assets/js/jquery.min.js"></script>
+			<script src="./assets/js/marked.js"></script>
+			<script src="./assets/js/moment-with-locales.js"></script>
+			<script src="./assets/js/angular/angular.js"></script>
+			<script src="./assets/js/angular/angular-sanitize.js"></script>
+			<script src="./assets/js/skel.min.js"></script>
+			<script src="./assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="./assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="./assets/js/main.js"></script>
+			<script src="./js/main.js"></script>
+
+	</body>
 </html>

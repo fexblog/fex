@@ -19,8 +19,8 @@ var config = {
   "tags": {
     "blockStart": "{%",
     "blockEnd": "%}",
-    "variableStart": "{{",
-    "variableEnd": "}}",
+    "variableStart": "[$",
+    "variableEnd": "$]",
     "commentStart": "<!--",
     "commentEnd": "-->"
   },
