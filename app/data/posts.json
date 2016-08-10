@@ -1,5 +1,17 @@
 [{
   "author_gh": "juanfevasquez",
+  "name": "Modules!",
+  "short": "This is just a test",
+  "image": "http://placehold.it/800x600",
+  "category": "javascript",
+  "origin": {
+    "repo": "functionalprogramming",
+    "path": "fpjs_05_modules/fpjs_05_modules.md",
+    "branch": "development"
+  },
+  "_id": "123"
+}, {
+  "author_gh": "juanfevasquez",
   "name": "Introduction to Gherkin",
   "short": "We use Gherkin when we want to describe a feature in a project. Let's try first to think about a mock project that will allow us to describe different features.",
   "image": "https://pixabay.com/static/uploads/photo/2016/05/04/19/39/stones-1372677_960_720.jpg",
@@ -58,18 +70,4 @@
     "branch": "development"
   },
   "_id": "16984660a716443194f98b651cdf2e5e"
-}, {
-  "author_gh": "juanfevasquez",
-  "name": "Modules!",
-  "short": "This is just a test",
-  "image": "http://placehold.it/800x600",
-  "category": "javascript",
-  "origin": {
-    "repo": "functionalprogramming",
-    "path": "fpjs_05_modules/fpjs_05_modules.md",
-    "branch": "development"
-  },
-  "_id": "123"
-}
-
-]
+}]
