@@ -14,3 +14,6 @@
 	path = app/plugins/requestLog
 	url = https://github.com/franky-tool/franky-requestLog
 	branch = master
+[submodule "app/plugins/templateEngine"]
+	path = app/plugins/templateEngine
+	url = https://github.com/franky-tool/franky-nunjucks
